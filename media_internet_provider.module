@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * media_internet_provider.module
+ */
+
+/**
+ * Implements hook_media_internet_providers().
+ */
+function media_internet_provider_media_internet_providers() {
+  return array(
+    'MediaInternetProviderFileHandler' => array(
+      'title' => 'Files (complex URIs)',
+      'hidden' => TRUE,
+      // The default MediaInternetFileHandler has a weight of 10000,
+      // ensure that ours is actually invoked after this one.
+      'weight' => 10001,
+    ),
+  );
+}
+
+/**
+ * Returns the allowed file extensions that is configured by File Entity.
+ *
+ * @return string
+ *   Single space separated values of all allowed file extensions.
+ */
+function media_internet_provider_file_allowed_extensions() {
+  return variable_get('file_entity_default_allowed_extensions', 'jpg jpeg gif png txt doc docx xls xlsx pdf ppt pptx pps ppsx odt ods odp mp3 mov mp4 m4a m4v mpeg avi ogg oga ogv weba webp webm');
+}

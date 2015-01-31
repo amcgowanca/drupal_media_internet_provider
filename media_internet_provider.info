@@ -1,0 +1,7 @@
+name = Media Internet Provider
+description = An updated Media Internet File handler for the Media Internet module.
+core = 7.x
+version = 7.x-1.0
+files[] = includes/MediaInternetProviderFileHandler.inc
+dependencies[] = media_internet
+dependencies[] = remote_stream_wrapper

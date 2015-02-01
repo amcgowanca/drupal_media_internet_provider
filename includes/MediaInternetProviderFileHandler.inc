@@ -58,7 +58,7 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
     $scheme = file_default_scheme() . '://';
     module_load_include('inc', 'file_entity', 'file_entity.pages');
     $tmp_file = $file;
-    $file_uri = file_stream_wrapper_uri_normalize(file_default_schema() . '://' . $file->filename);
+    $file_uri = file_stream_wrapper_uri_normalize(file_default_scheme() . '://' . $file->filename);
     $file = file_move($file, $file_uri, FILE_EXISTS_RENAME);
     if (FALSE === $file) {
       throw new Exception(t('Unable to move temporary file (@tmp_file) to destination: @destination.', array(

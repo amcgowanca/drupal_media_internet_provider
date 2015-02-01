@@ -55,7 +55,6 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
       throw new Exception(t('Unable to execute file move from temporary to destination as the handler has a previous error.'));
     }
 
-    $scheme = file_default_scheme() . '://';
     module_load_include('inc', 'file_entity', 'file_entity.pages');
     $tmp_file = $file;
     $file_uri = file_stream_wrapper_uri_normalize(file_default_scheme() . '://' . $file->filename);
@@ -82,9 +81,8 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
    * {@inheritdoc}
    */
   public function claim($url) {
-    if ($scheme = parse_url($url, PHP_URL_SCHEME)) {
-      $supported_schemes = variable_get('media_fromurl_supported_schemes', array('http', 'https', 'ftp', 'smb', 'ftps'));
-      if (in_array($scheme, $supported_schemes)) {
+    if (!empty($url) && $scheme = parse_url($url, PHP_URL_SCHEME)) {
+      if ($this->isSchemeSupported($scheme)) {
         if ($path = parse_url($url, PHP_URL_PATH)) {
           $filename = basename($path);
           $regex = '/\.(' . preg_replace('/ +/', '|', preg_quote(media_internet_provider_file_allowed_extensions())) . ')$/i';
@@ -95,5 +93,19 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Checks if the specified scheme is supported.
+   *
+   * @param string $scheme
+   *   The URI scheme (e.g. http, https).
+   *
+   * @return bool
+   *   Returns TRUE if the scheme is supported, otherwise FALSE.
+   */
+  protected function isSchemeSupported($scheme) {
+    $supported_schemes = variable_get('media_fromurl_supported_schemes', array('http', 'https', 'ftp', 'smb', 'ftps'));
+    return in_array($scheme, $supported_schemes);
   }
 }

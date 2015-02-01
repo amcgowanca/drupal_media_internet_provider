@@ -35,7 +35,6 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
     }
 
     $local_filename = basename($path);
-    // TODO: Determine if variable `file_entity_default_allowed_extensions` exists in a default function.
     $local_filename = file_munge_filename($local_filename, media_internet_provider_file_allowed_extensions(), FALSE);
     $local_uri = file_stream_wrapper_uri_normalize('temporary://' . $local_filename);
     if (!@copy($file->uri, $local_uri)) {
@@ -58,10 +57,15 @@ class MediaInternetProviderFileHandler extends MediaInternetBaseHandler {
 
     $scheme = file_default_scheme() . '://';
     module_load_include('inc', 'file_entity', 'file_entity.pages');
-    // TODO: Investigate the purpose of the line below; isn't 100% clear.
-    $destination_uri = file_entity_upload_destination_uri(array());
-    $file_uri = file_stream_wrapper_uri_normalize($destination_uri . '/' . $file->filename);
+    $tmp_file = $file;
+    $file_uri = file_stream_wrapper_uri_normalize(file_default_schema() . '://' . $file->filename);
     $file = file_move($file, $file_uri, FILE_EXISTS_RENAME);
+    if (FALSE === $file) {
+      throw new Exception(t('Unable to move temporary file (@tmp_file) to destination: @destination.', array(
+        '@tmp_file' => $tmp_file->uri,
+        '@destination' => $file_uri,
+      )));
+    }
   }
 
   /**
